@@ -33,6 +33,7 @@ public class SikuTrayIcon {
     public SikuTrayIcon() {
 	trayicon = new TrayIcon(createImage(ICON_FILE_NAME), "Siku");
 	systemTray = testAndReturnTray();
+	init();
     }
     
     private void init(){
@@ -51,16 +52,17 @@ public class SikuTrayIcon {
 	    @Override
 	    public void mouseClicked(MouseEvent e) {
 		//we will open the interface here.
+		Driver.showInterface();
 	    }
 
 	    @Override
 	    public void mousePressed(MouseEvent e) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Driver.showInterface();
 	    }
 
 	    @Override
 	    public void mouseReleased(MouseEvent e) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		
 	    }
 
 	    @Override
@@ -102,5 +104,4 @@ public class SikuTrayIcon {
 	    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
     }
-
 }
