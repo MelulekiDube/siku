@@ -1,7 +1,10 @@
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.SwingConstants;
 
 /*
@@ -14,12 +17,13 @@ import javax.swing.SwingConstants;
  *
  * @author dube_
  */
-public class GUi extends javax.swing.JFrame {
+public class Interface extends javax.swing.JFrame {
 
     /**
      * Creates new form GUi
      */
-    public GUi() {
+    public Interface() {
+	timer = new Timer();
 	this.setUndecorated(true);
 	initComponents();
 	this.setLocationRelativeTo(null);
@@ -59,9 +63,19 @@ public class GUi extends javax.swing.JFrame {
         btnAdd = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
         jToggleButton1 = new javax.swing.JToggleButton();
-        entryCombo = new javax.swing.JComboBox<>();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        btnDone = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        panel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                panelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                panelMouseExited(evt);
+            }
+        });
 
         btnPrevDate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/prev_date.png"))); // NOI18N
         btnPrevDate.setText(" ");
@@ -102,33 +116,53 @@ public class GUi extends javax.swing.JFrame {
 
         jToggleButton1.setText("Time Tracking On");
 
-        entryCombo.setModel(new javax.swing.DefaultComboBoxModel<>(getChoices()));
+        jComboBox1.setEditable(true);
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox1ItemStateChanged(evt);
+            }
+        });
+
+        btnDone.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Delete_25px.png"))); // NOI18N
+        btnDone.setPreferredSize(new java.awt.Dimension(40, 35));
+        btnDone.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDoneMouseClicked(evt);
+            }
+        });
+        btnDone.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDoneActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
         panel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(panelLayout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btnPrevDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, 0)
-                                .addComponent(date, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, 0)
-                                .addComponent(btnNextDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(panelLayout.createSequentialGroup()
-                                .addComponent(jToggleButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnPrevDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(date, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(btnNextDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(comboDates, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnAdd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(entryCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(comboDates, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
+                        .addComponent(jToggleButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(2, 2, 2)
+                        .addComponent(btnDone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -142,13 +176,14 @@ public class GUi extends javax.swing.JFrame {
                     .addComponent(btnPrevDate, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnNextDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboDates, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(entryCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGap(0, 0, 0)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
                     .addComponent(btnSettings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnDone, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -170,6 +205,9 @@ public class GUi extends javax.swing.JFrame {
         btnSettings.setBorderPainted(false);
         btnSettings.setFocusPainted(false);
         btnSettings.setContentAreaFilled(false);
+        btnDone.setBorderPainted(false);
+        btnDone.setFocusPainted(false);
+        btnDone.setContentAreaFilled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -203,6 +241,33 @@ public class GUi extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnSettingsActionPerformed
 
+    private void panelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_panelMouseEntered
+
+    private void panelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelMouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_panelMouseExited
+
+    private void btnDoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoneActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDoneActionPerformed
+
+    private void btnDoneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDoneMouseClicked
+        // TODO add your handling code here:
+	this.setVisible(false);
+	Driver.startDelay();
+    }//GEN-LAST:event_btnDoneMouseClicked
+
+    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+        // TODO add your handling code here:
+	updateDoneButtonIcon(Driver.CHECK_MARK);
+    }//GEN-LAST:event_jComboBox1ItemStateChanged
+    
+    public void updateDoneButtonIcon(String icon){
+	  btnDone.setIcon(new javax.swing.ImageIcon(getClass().getResource(icon))); // NOI18N
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -220,32 +285,38 @@ public class GUi extends javax.swing.JFrame {
 		}
 	    }
 	} catch (ClassNotFoundException ex) {
-	    java.util.logging.Logger.getLogger(GUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+	    java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 	} catch (InstantiationException ex) {
-	    java.util.logging.Logger.getLogger(GUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+	    java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 	} catch (IllegalAccessException ex) {
-	    java.util.logging.Logger.getLogger(GUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+	    java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 	} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-	    java.util.logging.Logger.getLogger(GUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+	    java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 	}
+	//</editor-fold>
 	//</editor-fold>
 
 	/* Create and display the form */
 	java.awt.EventQueue.invokeLater(new Runnable() {
+	    @Override
 	    public void run() {
-		new GUi().setVisible(true);
+		new Interface().setVisible(true);
 	    }
 	});
     }
+    
+    //personal variable declaration
+    private Timer timer;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnDone;
     private javax.swing.JButton btnNextDate;
     private javax.swing.JButton btnPrevDate;
     private javax.swing.JButton btnSettings;
     private javax.swing.JComboBox<String> comboDates;
     private javax.swing.JLabel date;
-    private javax.swing.JComboBox<String> entryCombo;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JPanel panel;
     // End of variables declaration//GEN-END:variables
